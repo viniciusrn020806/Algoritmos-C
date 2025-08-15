@@ -22,8 +22,8 @@ int main(){
     segundos_meia = (24 * 3600);
 
     
-    printf("Se passaram %d segundos desde 00:00: passaram segundos", tempo_passado);
-    printf("Faltam %d segundos para 00:00: ", (segundos_meia - tempo_passado));
+    printf("Se passaram %d segundos desde 00:00: passaram segundos\n", tempo_passado);
+    printf("Faltam %d segundos para 00:00: \n", (segundos_meia - tempo_passado));
 
 
 }
