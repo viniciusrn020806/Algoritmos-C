@@ -24,9 +24,7 @@ int main(){
     
     media = (0.2 * lab) + (0.8 * sqrt(nota2 * nota3));
     printf("A NF é: %.2f\n ",media);
-   
-   
-   
+    
     return 0;
     
 
