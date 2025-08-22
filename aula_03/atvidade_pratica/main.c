@@ -20,11 +20,8 @@ int main(){
 
   if (opcao == 'D' || opcao == 'd'){
         resultado = div(num1, num2);
-
-    printf("O resultado da divisão é: %.2f", resultado);
-      if (num2 == 0){
-            return printf("Impossível fazer divisão por zero !!");
-        }
+        printf("O resultado da divisão é: %.2f", resultado);
+      
 }
 
     if (opcao == 'B' || opcao == 'b'){
@@ -34,6 +31,9 @@ int main(){
     if (opcao == 'M' || opcao == 'm'){
         resultado = multi(num1, num2);
         printf("O resultado da multiplicação é: %.2f", resultado);
+    }
+    else{
+        return printf("Opção Inválida!");
     }
     return 0;
 }
