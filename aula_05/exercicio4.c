@@ -17,19 +17,19 @@ int main()
     switch (Operacao)
     {
     case '+':
-     cout << "\nSoma de Num1 + Num 2 = " << num1 + num2;
+     printf("\nSoma de Num1 + Num 2 = ", num1 + num2);
         break;
     case '-':
-    cout << "\nSubtração de Num1 - Num2 = " << num1 - num2;
+    printf("\nSubtração de Num1 - Num2 = " , num1 - num2);
         break;
     case '*':
-    cout << "\nMutiplicação de Num1 * Num2 = " << num1 * num2;
+    printf("\nMutiplicação de Num1 * Num2 = " , num1 * num2);
         break;  
     case '/': 
-    cout << "\nDivisão de Num1 / Num2 = " << num1 /num2;
+    printf("\nDivisão de Num1 / Num2 = ", num1 /num2);
         break;
     default :
-    cout << "\n Você não digitou um operador valido! ";
+    printf("\n Você não digitou um operador valido! ");
         break;
     }
 
