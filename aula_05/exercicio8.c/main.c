@@ -35,7 +35,7 @@ int main()
     {
     case 1 :   
         printf("\nDigite o raio do circulo: ");
-        scanf("%f", &raio);
+        scanf("%f", &raio); 
         area = M_PI * pow(raio, 2);
         printf("A area do circulo de raio %.2f eh: %.2f\n", raio, area);
    break;
