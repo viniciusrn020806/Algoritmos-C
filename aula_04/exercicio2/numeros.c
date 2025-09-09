@@ -6,7 +6,7 @@ int eh_par(int numero){
 }
 
 int primo(int numero){
-    for(int i = 2; i < numero; i++){
+    for(int i = 2; i < numero; i++){ 
         if(numero % i == 0){
             return 0;
         }

@@ -25,9 +25,9 @@ int main()
          
     printf("\n******************************\n");
     printf("\nEscolha uma opcao: ");
-    if (scanf("%d", &numeros) != 1) {
+    if (scanf("%d", &numeros) != 1 || 2 || 3 || 4) {
             printf("\nEntrada invalida! Digite um numero.\n");
-            while (&getchar);
+        
     }
 
  
