@@ -12,21 +12,21 @@ int main()
     scanf("%f", & num2);
     printf("Qual operacao deseja efetuar? \n+ Adição \n- Subtração \n* Multiplicação ou \n/ Divisão?");
     printf("\n Digite sua opção: ");
-    scanf("%c", &Operacao);
+    scanf(" %c", &Operacao);
 
     switch (Operacao)
     {
     case '+':
-     printf("\nSoma de Num1 + Num 2 = ", num1 + num2);
+     printf("\nSoma de Num1 + Num 2 = %.2f", num1 + num2);
         break;
     case '-':
-    printf("\nSubtração de Num1 - Num2 = " , num1 - num2);
+    printf("\nSubtração de Num1 - Num2 = %.2f" , num1 - num2);
         break;
     case '*':
-    printf("\nMutiplicação de Num1 * Num2 = " , num1 * num2);
+    printf("\nMutiplicação de Num1 * Num2 = %.2f" , num1 * num2);
         break;  
     case '/': 
-    printf("\nDivisão de Num1 / Num2 = ", num1 /num2);
+    printf("\nDivisão de Num1 / Num2 = %.2f", num1 /num2);
         break;
     default :
     printf("\n Você não digitou um operador valido! ");
