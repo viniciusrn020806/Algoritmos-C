@@ -1,0 +1,7 @@
+101,1,Pao de Queijo,5.50
+102,1,Coxinha de Frango,6.00
+103,1,Suco de Laranja,7.00
+104,2,Pastel de Queijo,6.50
+105,2,Agua de Coco,5.00
+106,3,Pao Frances,0.50
+107,3,Fatia de Bolo,4.50
