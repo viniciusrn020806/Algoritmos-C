@@ -327,7 +327,7 @@ void gerenciarNovoPedido(int idUsuario) {
                 printf("\nDigite o ID do alimento que deseja adicionar: ");
                 scanf("%d", &idAlimentoInput);
                 if (getAlimentoPorId(idAlimentoInput, &alimTemp) == 1) {
-                    carrinho.idAlimentos[carrinho.numItens] = alimTemp.id;
+                    carrinho.idAlimentos[carrinho.numItens] = alimTemp.id; 
                     carrinho.precoTotal += alimTemp.preco;
                     carrinho.numItens++;
                     printf("'%s' foi adicionado ao carrinho!\n", alimTemp.nome);
