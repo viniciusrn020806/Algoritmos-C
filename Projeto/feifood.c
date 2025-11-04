@@ -2,18 +2,18 @@
 #include <stdlib.h> 
 #include <string.h> 
 
-// Arquivos de "Banco de Dados"
+// constantes para os nomes dos arquivos de texto
 #define ARQUIVO_USUARIOS "usuarios.txt"
 #define ARQUIVO_ESTABELECIMENTOS "estabelecimentos.txt"
 #define ARQUIVO_ALIMENTOS "alimentos.txt"
 #define ARQUIVO_PEDIDOS "pedidos.txt" 
 
-// Constantes
-#define MAX_STRING 100
-#define MAX_ITENS_PEDIDO 10 
+// constantes
+#define MAX_STRING 100         
+#define MAX_ITENS_PEDIDO 10   
 
 
-// ESTRUTURAS DE DADOS 
+//estruturas de dados
 
 
 typedef struct {
@@ -41,21 +41,21 @@ typedef struct {
     int idAlimentos[MAX_ITENS_PEDIDO]; 
     int numItens;
     double precoTotal;
-    int avaliacao; // -1 = N/A, 0 a 5 = Avaliado
+    int avaliacao; 
 } Pedido;
 
 
-/*
- FUNÇÕES AUXILIARES
-*/
 
-// Função para limpar o buffer do teclado
+
+
+
+// função para limpar o buffer do teclado 
 void limparBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-// Busca o nome de um estabelecimento pelo ID
+// busca o nome de um estabelecimento pelo ID
 void getNomeEstabelecimento(int idEst, char* nomeResultado) {
     FILE *arquivoEst;
     Estabelecimento est;
@@ -68,16 +68,17 @@ void getNomeEstabelecimento(int idEst, char* nomeResultado) {
     }
 
     while (fgets(linha, sizeof(linha), arquivoEst) != NULL) {
-        sscanf(linha, "%d,%[^\n]", &est.id, est.nome);
+        // lê a linha (ID,Nome) e armazena em 'est'
+        sscanf(linha, "%d,%[^\n]", &est.id, est.nome); 
         if (est.id == idEst) {
-            strcpy(nomeResultado, est.nome);
+            strcpy(nomeResultado, est.nome); 
             break;
         }
     }
     fclose(arquivoEst);
 }
 
-// Busca um alimento pelo ID e retorna seus dados
+// busca um alimento pelo ID e retorna seus dados 
 int getAlimentoPorId(int idAlimento, Alimento *alim) {
     FILE *arquivo;
     char linha[MAX_STRING * 3];
@@ -89,6 +90,7 @@ int getAlimentoPorId(int idAlimento, Alimento *alim) {
     }
 
     while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        
         sscanf(linha, "%d,%d,%[^,],%lf",
                &alim->id,
                &alim->idEstabelecimento,
@@ -96,40 +98,42 @@ int getAlimentoPorId(int idAlimento, Alimento *alim) {
                &alim->preco);
         
         if (alim->id == idAlimento) {
-            encontrou = 1;
+            encontrou = 1; // Dados do alimento estão agora em 'alim'
             break;
         }
     }
     fclose(arquivo);
-    return encontrou;
+    return encontrou; // Retorna 1 se encontrou, 0 se não
 }
 
-/*
- FUNÇÕES DE USUÁRIO (Login/Cadastro)
- (Sem alterações)
-*/
+
+ //funções de usuario (login/cadastro)
+ 
+
 
 void cadastrarUsuario() {
     Usuario novoUsuario;
     FILE *arquivo;
     int idAtual = 1;
 
+    // tenta calcular o próximo ID, contando as linhas do arquivo de usuários
     arquivo = fopen(ARQUIVO_USUARIOS, "r");
     if (arquivo != NULL) {
         char linha[MAX_STRING * 3];
         while (fgets(linha, sizeof(linha), arquivo) != NULL) {
-            idAtual++;
+            idAtual++; // incrementa o ID para cada linha existente
         }
         fclose(arquivo);
     }
     novoUsuario.id = idAtual;
 
     printf("\n--- Cadastro de Novo Usuario (ID: %d) ---\n", novoUsuario.id);
-    limparBuffer(); 
+    limparBuffer(); // limpa o buffer antes de ler strings com fgets
     
+    // coleta dados do novo usuário
     printf("Digite seu nome completo: ");
     fgets(novoUsuario.nome, MAX_STRING, stdin);
-    novoUsuario.nome[strcspn(novoUsuario.nome, "\n")] = 0;
+    novoUsuario.nome[strcspn(novoUsuario.nome, "\n")] = 0; // Remove o \n final
 
     printf("Digite seu login: ");
     fgets(novoUsuario.login, MAX_STRING, stdin);
@@ -139,6 +143,7 @@ void cadastrarUsuario() {
     fgets(novoUsuario.senha, MAX_STRING, stdin);
     novoUsuario.senha[strcspn(novoUsuario.senha, "\n")] = 0;
 
+    // Grava o novo usuário no arquivo (modo "a" - append)
     arquivo = fopen(ARQUIVO_USUARIOS, "a"); 
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo %s!\n", ARQUIVO_USUARIOS);
@@ -153,6 +158,7 @@ void cadastrarUsuario() {
     printf("\nUsuario '%s' cadastrado com sucesso!\n", novoUsuario.login);
 }
 
+// Tenta logar um usuário. Retorna 1 se sucesso, 0 se falha.
 int loginUsuario(int *idUsuarioLogado) {
     char loginInput[MAX_STRING];
     char senhaInput[MAX_STRING];
@@ -164,6 +170,7 @@ int loginUsuario(int *idUsuarioLogado) {
     printf("\n--- FEIFood: Login de Usuario ---\n");
     limparBuffer(); 
 
+    // Coleta as credenciais
     printf("Digite seu login: ");
     fgets(loginInput, MAX_STRING, stdin);
     loginInput[strcspn(loginInput, "\n")] = 0; 
@@ -172,23 +179,27 @@ int loginUsuario(int *idUsuarioLogado) {
     fgets(senhaInput, MAX_STRING, stdin);
     senhaInput[strcspn(senhaInput, "\n")] = 0; 
 
+    // Abre o arquivo para leitura
     arquivo = fopen(ARQUIVO_USUARIOS, "r");
     if (arquivo == NULL) {
         printf("Erro! Nao foi possivel abrir o arquivo %s\n", ARQUIVO_USUARIOS);
         return 0; 
     }
 
+    // Compara linha por linha
     while (fgets(linhaDoArquivo, sizeof(linhaDoArquivo), arquivo) != NULL) {
+        // Usa sscanf para extrair os dados da linha para a estrutura 'usuarioLido'
         sscanf(linhaDoArquivo, "%d,%[^,],%[^,],%[^\n]",
                &usuarioLido.id,
                usuarioLido.nome,
                usuarioLido.login,
                usuarioLido.senha);
 
+        // Compara login e senha
         if (strcmp(loginInput, usuarioLido.login) == 0 && 
             strcmp(senhaInput, usuarioLido.senha) == 0) {
             loginSucesso = 1; 
-            *idUsuarioLogado = usuarioLido.id;
+            *idUsuarioLogado = usuarioLido.id; // Armazena o ID do usuário logado
             printf("\nLogin bem-sucedido!\n");
             printf("Bem-vindo(a), %s (ID: %d).\n", usuarioLido.nome, usuarioLido.id);
             break; 
@@ -204,9 +215,9 @@ int loginUsuario(int *idUsuarioLogado) {
 
 /*
  FUNÇÕES DE ALIMENTOS (Busca/Listagem)
- (Sem alterações)
 */
 
+// Permite buscar alimentos por um termo no nome
 void buscarAlimento() {
     char termoBusca[MAX_STRING];
     Alimento alimento;
@@ -217,7 +228,7 @@ void buscarAlimento() {
     printf("\n--- Buscar Alimento ---\n");
     limparBuffer(); 
     
-    printf("Digite o nome (ou parte do nome) do alimento: ");
+    printf("Digite o nome do alimento: ");
     fgets(termoBusca, MAX_STRING, stdin);
     termoBusca[strcspn(termoBusca, "\n")] = 0; 
 
@@ -236,9 +247,10 @@ void buscarAlimento() {
                alimento.nome,
                &alimento.preco);
 
+        // strstr() verifica se 'termoBusca' está contido em 'alimento.nome'
         if (strstr(alimento.nome, termoBusca) != NULL) {
             char nomeEstab[MAX_STRING];
-            getNomeEstabelecimento(alimento.idEstabelecimento, nomeEstab);
+            getNomeEstabelecimento(alimento.idEstabelecimento, nomeEstab); // Busca o nome do estab
             printf("  ID: %d | Nome: %s | Preco: R$%.2f | Estab: %s\n",
                    alimento.id,
                    alimento.nome,
@@ -254,6 +266,7 @@ void buscarAlimento() {
     fclose(arquivo);
 }
 
+// Lista todos os alimentos disponíveis no sistema
 void listarTodosAlimentos() {
     Alimento alimento;
     FILE *arquivoAlimentos;
@@ -268,6 +281,7 @@ void listarTodosAlimentos() {
         return;
     }
 
+    // Cabeçalho formatado
     printf("%-5s | %-20s | %-8s | %s\n", "ID", "Alimento", "Preco", "Estabelecimento");
     printf("------------------------------------------------------------------\n");
     
@@ -278,8 +292,9 @@ void listarTodosAlimentos() {
                alimento.nome,
                &alimento.preco);
         
-        getNomeEstabelecimento(alimento.idEstabelecimento, nomeEstabelecimento);
+        getNomeEstabelecimento(alimento.idEstabelecimento, nomeEstabelecimento); // Obtém o nome do Estab
 
+        // Imprime a linha formatada
         printf("%-5d | %-20s | R$%-5.2f | %s\n",
                alimento.id,
                alimento.nome,
@@ -290,26 +305,28 @@ void listarTodosAlimentos() {
 }
 
 
-/*
- FUNÇÕES DE PEDIDO (CRUD)
-*/
+
+// FUNÇÕES DE PEDIDO (CRUD)
+
 
 void gerenciarNovoPedido(int idUsuario) {
-    // Esta função está ok, sem alterações.
-    Pedido carrinho; 
+    
+    Pedido carrinho; // Variável local para simular o carrinho
     Alimento alimTemp; 
     int opcao = -1;
     int idAlimentoInput = 0;
     
+    // Inicializa o carrinho
     carrinho.idUsuario = idUsuario;
     carrinho.numItens = 0;
     carrinho.precoTotal = 0.0;
-    carrinho.avaliacao = -1; 
+    carrinho.avaliacao = -1; // -1 = N/A (não avaliado)
 
     printf("\n--- Criando Novo Pedido ---\n");
 
     while (opcao != 0) {
         printf("\n--- Carrinho (Itens: %d | Total: R$%.2f) ---\n", carrinho.numItens, carrinho.precoTotal);
+        // Menu de carrinho
         printf("1. Adicionar Alimento ao Pedido\n");
         printf("2. Ver Carrinho Detalhado\n");
         printf("3. Salvar Pedido\n");
@@ -326,7 +343,9 @@ void gerenciarNovoPedido(int idUsuario) {
                 listarTodosAlimentos(); 
                 printf("\nDigite o ID do alimento que deseja adicionar: ");
                 scanf("%d", &idAlimentoInput);
+                // Verifica se o ID existe
                 if (getAlimentoPorId(idAlimentoInput, &alimTemp) == 1) {
+                    // Adiciona o ID do alimento ao array do carrinho
                     carrinho.idAlimentos[carrinho.numItens] = alimTemp.id; 
                     carrinho.precoTotal += alimTemp.preco;
                     carrinho.numItens++;
@@ -336,6 +355,7 @@ void gerenciarNovoPedido(int idUsuario) {
                 }
                 break;
             case 2:
+                // Lista os itens, usando getAlimentoPorId para buscar os nomes e preços
                 printf("\n--- Itens no Carrinho ---\n");
                 if (carrinho.numItens == 0) {
                     printf("Carrinho vazio.\n");
@@ -349,10 +369,12 @@ void gerenciarNovoPedido(int idUsuario) {
                 printf("Total: R$%.2f\n", carrinho.precoTotal);
                 break;
             case 3:
+                // Salvar Pedido
                 if (carrinho.numItens == 0) {
                     printf("Nao e possivel salvar um pedido vazio!\n");
                     break;
                 }
+                // Calcula o próximo ID do Pedido
                 FILE *arquivoPedidos;
                 int idAtual = 1;
                 arquivoPedidos = fopen(ARQUIVO_PEDIDOS, "r");
@@ -364,24 +386,28 @@ void gerenciarNovoPedido(int idUsuario) {
                     fclose(arquivoPedidos);
                 }
                 carrinho.id = idAtual;
+                
+                // Grava os dados do pedido (modo "a" - append)
                 arquivoPedidos = fopen(ARQUIVO_PEDIDOS, "a");
                 if (arquivoPedidos == NULL) {
                     printf("Erro ao salvar o pedido!\n");
                     return; 
                 }
+                // Grava os 5 campos principais (ID, UserID, Preco, Avaliacao, NumItens)
                 fprintf(arquivoPedidos, "%d,%d,%.2f,%d,%d",
                         carrinho.id,
                         carrinho.idUsuario,
                         carrinho.precoTotal,
                         carrinho.avaliacao,
                         carrinho.numItens);
+                // Grava a lista de IDs de alimentos, separados por vírgula
                 for (int i = 0; i < carrinho.numItens; i++) {
                     fprintf(arquivoPedidos, ",%d", carrinho.idAlimentos[i]);
                 }
-                fprintf(arquivoPedidos, "\n"); 
+                fprintf(arquivoPedidos, "\n"); // Quebra de linha para o próximo pedido
                 fclose(arquivoPedidos);
                 printf("\nPedido %d salvo com sucesso!\n", carrinho.id);
-                opcao = 0;
+                opcao = 0; // Sai do loop do carrinho
                 break;
             case 0:
                 printf("Criacao do pedido cancelada.\n");
@@ -392,9 +418,9 @@ void gerenciarNovoPedido(int idUsuario) {
     }
 }
 
-// Lista os pedidos do usuário
+// Lista os pedidos do usuário logado (usada como auxiliar para Avaliar, Editar e Excluir)
 int listarMeusPedidos(int idUsuario) {
-    // Esta função está ok, sem alterações.
+    
     FILE *arquivo;
     char linha[MAX_STRING * 5]; 
     Pedido pedido;
@@ -411,6 +437,7 @@ int listarMeusPedidos(int idUsuario) {
     printf("------------------------------------------\n");
 
     while (fgets(linha, sizeof(linha), arquivo) != NULL) {
+        // Lê os 5 campos principais
         sscanf(linha, "%d,%d,%lf,%d,%d",
                &pedido.id,
                &pedido.idUsuario,
@@ -418,7 +445,7 @@ int listarMeusPedidos(int idUsuario) {
                &pedido.avaliacao,
                &pedido.numItens);
 
-        if (pedido.idUsuario == idUsuario) {
+        if (pedido.idUsuario == idUsuario) { // Filtra apenas pedidos do usuário logado
             char avaliacaoStr[5];
             if (pedido.avaliacao == -1) {
                 strcpy(avaliacaoStr, "N/A");
@@ -441,13 +468,14 @@ int listarMeusPedidos(int idUsuario) {
     return encontrouPedidos;
 }
 
+// Permite ao usuário atribuir uma avaliação (nota) a um pedido existente
 void avaliarPedido(int idUsuario) {
     int idPedidoInput;
     int novaAvaliacao;
     int pedidoEncontrado = 0;
 
     printf("\n--- Avaliar Pedido ---\n");
-    if (listarMeusPedidos(idUsuario) == 0) {
+    if (listarMeusPedidos(idUsuario) == 0) { // Lista para que o usuário saiba o ID
         return;
     }
 
@@ -462,6 +490,7 @@ void avaliarPedido(int idUsuario) {
         return;
     }
 
+    // Processo de UPDATE (lê do Original, escreve no Temp)
     FILE *arquivoOriginal;
     FILE *arquivoTemp;
     char linha[MAX_STRING * 5];
@@ -477,33 +506,32 @@ void avaliarPedido(int idUsuario) {
     }
 
     while (fgets(linha, sizeof(linha), arquivoOriginal) != NULL) {
-        // Lê os 5 campos principais
+        // Lê os 5 campos principais (necessário para pegar 'id' e 'idUser')
         sscanf(linha, "%d,%d,%lf,%d,%d", &id, &idUser, &preco, &avaliacaoAntiga, &numItens);
 
-        if (id == idPedidoInput && idUser == idUsuario) {
+        if (id == idPedidoInput && idUser == idUsuario) { // Pedido a ser modificado
             pedidoEncontrado = 1;
             
-            // Escreve a linha MODIFICADA no arquivo temporário
+            // 1. Escreve a linha MODIFICADA no arquivo temporário, mudando apenas a avaliação
             fprintf(arquivoTemp, "%d,%d,%.2f,%d,%d",
                     id, idUser, preco, novaAvaliacao, numItens); // Escreve a nova avaliação
             
-            // Agora, precisamos copiar o resto da linha (os IDs dos itens)
-            // Vamos encontrar a 5ª vírgula
+            // 2. Encontra a 5ª vírgula (após 'numItens') para copiar o resto da linha (IDs dos alimentos)
             int i = 0;
             int virgulas = 0;
             while (linha[i] != '\0') {
                 if (linha[i] == ',') {
                     virgulas++;
                     if (virgulas == 5) {
-                        break; // Para *na* 5ª vírgula
+                        break; 
                     }
                 }
                 i++;
             }
             
-            // Copia o resto da string a partir da 5ª vírgula
+            // 3. Copia o resto da string (que contém os IDs de alimentos)
             if (linha[i] != '\0') {
-                fprintf(arquivoTemp, "%s", &linha[i]); // &linha[i] aponta para a 5ª vírgula
+                fprintf(arquivoTemp, "%s", &linha[i]); // &linha[i] aponta para a 5ª vírgula e o resto
             }
             
         } else {
@@ -515,17 +543,18 @@ void avaliarPedido(int idUsuario) {
     fclose(arquivoOriginal);
     fclose(arquivoTemp);
 
+    // Finaliza o UPDATE (troca de arquivos)
     if (pedidoEncontrado) {
-        remove(ARQUIVO_PEDIDOS); 
-        rename("pedidos_temp.txt", ARQUIVO_PEDIDOS); 
+        remove(ARQUIVO_PEDIDOS); // Deleta o arquivo antigo
+        rename("pedidos_temp.txt", ARQUIVO_PEDIDOS); // Renomeia o temporário
         printf("Pedido %d avaliado com %d estrelas!\n", idPedidoInput, novaAvaliacao);
     } else {
-        remove("pedidos_temp.txt"); 
+        remove("pedidos_temp.txt"); // Deleta o temporário se não encontrou o pedido
         printf("Pedido %d nao encontrado ou nao pertence a voce.\n", idPedidoInput);
     }
 }
 
-// Exclui um pedido (Esta função não usa token)
+// Exclui um pedido do usuário logado (DELETE)
 void excluirPedido(int idUsuario) {
     int idPedidoInput;
     int pedidoEncontrado = 0;
@@ -538,6 +567,7 @@ void excluirPedido(int idUsuario) {
     printf("\nDigite o ID do pedido que deseja EXCLUIR: ");
     scanf("%d", &idPedidoInput);
 
+    // Confirmação de segurança
     char certeza[10];
     printf("Tem certeza que deseja excluir o pedido %d? (s/n): ", idPedidoInput);
     scanf("%s", certeza);
@@ -547,6 +577,7 @@ void excluirPedido(int idUsuario) {
         return;
     }
 
+    // Processo de DELETE (lê do Original, escreve no Temp)
     FILE *arquivoOriginal;
     FILE *arquivoTemp;
     char linha[MAX_STRING * 5];
@@ -565,15 +596,16 @@ void excluirPedido(int idUsuario) {
 
         if (id == idPedidoInput && idUser == idUsuario) {
             pedidoEncontrado = 1;
-            continue; // Pula para a próxima linha (não copia)
+            continue; // Pula para a próxima linha (o pedido é *ignorado* e não copiado)
         } else {
-            fprintf(arquivoTemp, "%s", linha);
+            fprintf(arquivoTemp, "%s", linha); // Copia a linha original
         }
     }
 
     fclose(arquivoOriginal);
     fclose(arquivoTemp);
 
+    // Finaliza o DELETE (troca de arquivos)
     if (pedidoEncontrado) {
         remove(ARQUIVO_PEDIDOS); 
         rename("pedidos_temp.txt", ARQUIVO_PEDIDOS); 
@@ -584,7 +616,7 @@ void excluirPedido(int idUsuario) {
     }
 }
 
-// Edita um pedido (removendo um item) (SEM STRTTOK)
+// Edita um pedido, permitindo remover um item (UPDATE complexo)
 void editarPedido(int idUsuario) {
     int idPedidoInput;
     int pedidoEncontrado = 0;
@@ -614,39 +646,40 @@ void editarPedido(int idUsuario) {
     }
 
     while (fgets(linha, sizeof(linha), arquivoOriginal) != NULL) {
-        strcpy(linhaOriginalCopia, linha); 
+        strcpy(linhaOriginalCopia, linha); // Salva a linha original caso a edição seja cancelada
         
         sscanf(linha, "%d,%d,%lf,%d,%d", &id, &idUser, &preco, &avaliacao, &numItens);
 
         if (id == idPedidoInput && idUser == idUsuario) {
             pedidoEncontrado = 1;
             
-            // 1. Carregar os IDs dos itens manualmente
+            // 1. Carregar os IDs dos itens manualmente (sscanf não funciona bem para arrays de tamanho variável)
             int i = 0;
             int virgulas = 0;
+            // Encontra o ponto de início (após a 5ª vírgula - que delimita 'numItens')
             while(linha[i] != '\0' && virgulas < 5) {
                 if (linha[i] == ',') virgulas++;
                 i++;
             }
-            // i agora aponta para o início do primeiro ID
 
             char bufferId[10];
-            int j = 0; // índice do bufferId
-            int itemIndex = 0; // índice do idAlimentos
+            int j = 0; 
+            int itemIndex = 0; 
             
+            // Faz o parsing dos IDs um por um
             while(linha[i] != '\0' && linha[i] != '\n') {
                 if (linha[i] == ',') {
                     bufferId[j] = '\0';
                     idAlimentos[itemIndex] = atoi(bufferId);
                     itemIndex++;
-                    j = 0; // Reseta buffer
+                    j = 0; 
                 } else {
                     bufferId[j] = linha[i];
                     j++;
                 }
                 i++;
             }
-            // Pega o último ID (que não termina em vírgula)
+            // Pega o último ID
             bufferId[j] = '\0';
             idAlimentos[itemIndex] = atoi(bufferId);
 
@@ -657,26 +690,27 @@ void editarPedido(int idUsuario) {
                 printf("%d. %s (R$%.2f)\n", k+1, alimTemp.nome, alimTemp.preco);
             }
 
-            // 2. Perguntar qual item remover
+            // 2. Pergunta qual item remover
             int itemParaRemover;
             printf("Digite o numero do item a remover (1 a %d) (ou 0 para cancelar): ", numItens);
             scanf("%d", &itemParaRemover);
 
             if (itemParaRemover <= 0 || itemParaRemover > numItens) {
                 printf("Remocao cancelada ou item invalido.\n");
-                fprintf(arquivoTemp, "%s", linhaOriginalCopia);
+                fprintf(arquivoTemp, "%s", linhaOriginalCopia); // Volta a linha original
             } else {
                 int indexRemovido = itemParaRemover - 1;
                 getAlimentoPorId(idAlimentos[indexRemovido], &alimTemp);
                 
+                // Recalcula o preço total e o número de itens
                 double novoPreco = preco - alimTemp.preco;
                 int novoNumItens = numItens - 1;
 
-                // 3. Escreve a linha modificada
+                // 3. Escreve a linha modificada (Novos Preco e NumItens)
                 fprintf(arquivoTemp, "%d,%d,%.2f,%d,%d",
                         id, idUser, novoPreco, avaliacao, novoNumItens);
                 
-                // 4. Escreve os itens restantes
+                // 4. Escreve os IDs dos itens restantes (o item removido é pulado)
                 for (int k = 0; k < numItens; k++) {
                     if (k == indexRemovido) continue; // Pula o item removido
                     fprintf(arquivoTemp, ",%d", idAlimentos[k]);
@@ -693,6 +727,7 @@ void editarPedido(int idUsuario) {
     fclose(arquivoOriginal);
     fclose(arquivoTemp);
 
+    // Finaliza o UPDATE (troca de arquivos)
     if (pedidoEncontrado) {
         remove(ARQUIVO_PEDIDOS);
         rename("pedidos_temp.txt", ARQUIVO_PEDIDOS);
@@ -706,15 +741,15 @@ void editarPedido(int idUsuario) {
 
 /*
  MENUS DE NAVEGAÇÃO
- (Sem alterações)
 */
 
+// Menu de gerenciamento de pedidos (Editar/Excluir)
 void gerenciarPedidos(int idUsuario) {
     int opcao = -1;
     
     while (opcao != 0) {
         printf("\n--- Gerenciar Meus Pedidos ---\n");
-        printf("1. Editar Pedido (Remover Item)\n");
+        printf("1. Editar Pedido/Remover Item\n");
         printf("2. Excluir Pedido\n");
         printf("0. Voltar ao Menu Principal\n");
         printf("Escolha uma opcao: ");
@@ -735,13 +770,14 @@ void gerenciarPedidos(int idUsuario) {
     }
 }
 
+// Menu principal após o login
 void menuUsuarioLogado(int idUsuario) {
     int opcao = -1;
 
     while (opcao != 0) {
         printf("\n--- FEIFood (Logado como ID: %d) ---\n", idUsuario);
         printf("1. Buscar Alimento\n");
-        printf("2. Listar Todos os Alimentos\n"); 
+        printf("2. Lista de Todos os Alimentos\n"); 
         printf("3. Criar Novo Pedido\n");
         printf("4. Avaliar Pedido\n");
         printf("5. Gerenciar Pedidos (Editar/Excluir)\n");
@@ -775,16 +811,16 @@ void menuUsuarioLogado(int idUsuario) {
     }
 }
 
-/*
- FUNÇÃO PRINCIPAL
- (Sem alterações)
-*/
+
+// FUNÇÃO PRINCIPAL
+ 
+
 int main() {
     int opcao = -1;
     int idUsuarioLogado = 0; 
     int loginStatus = 0;     
 
-    while (opcao != 0) {
+    while (opcao != 0) { // Loop do menu inicial (Login/Cadastro/Sair)
         printf("\n--- BEM-VINDO AO FEIFOOD ---\n");
         printf("1. Fazer Login\n");
         printf("2. Cadastrar Novo Usuario\n");
@@ -795,9 +831,9 @@ int main() {
 
         switch (opcao) {
             case 1:
-                loginStatus = loginUsuario(&idUsuarioLogado); 
+                loginStatus = loginUsuario(&idUsuarioLogado); // Tenta fazer login
                 if (loginStatus == 1) {
-                    menuUsuarioLogado(idUsuarioLogado);
+                    menuUsuarioLogado(idUsuarioLogado); // Entra no menu principal se logado com sucesso
                 }
                 break;
             case 2:
