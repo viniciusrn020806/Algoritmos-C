@@ -1,6 +1,3 @@
-1,Vinicius Rodrigues do Nascimento,Vinicius123,12345
-2,Viviii,123ff,35463
-3,,,
-4,vivi,ff,123
-5,Joao pedro Maiorano,Maiorano,1234
-6,mat,mat123,123
+
+2,cd "/Users/viniciusrodrigues/Documents/GitHub/Algoritmos-C/Projeto/" && gcc Feifood.c -o Feifood &&, "/Users/viniciusrodrigues/Documents/GitHub/Algoritmos-C/Projeto/"Feifood,
+3,Vinicius,Vinicius123,1234
