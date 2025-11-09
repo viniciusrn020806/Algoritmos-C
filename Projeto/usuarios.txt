@@ -1,3 +1,4 @@
 
 2,cd "/Users/viniciusrodrigues/Documents/GitHub/Algoritmos-C/Projeto/" && gcc Feifood.c -o Feifood &&, "/Users/viniciusrodrigues/Documents/GitHub/Algoritmos-C/Projeto/"Feifood,
 3,Vinicius,Vinicius123,1234
+4,Vinicius,Vinicius123,1234
